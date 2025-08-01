@@ -7,6 +7,10 @@ on:
                 description: 'Define branch name'
                 required: true
                 default: 'master'
+            subfolder:
+                description: 'Define subfolder name'
+                required: true
+                default: '.'
 
 jobs:
     build:
@@ -42,14 +46,14 @@ jobs:
             - name: Compile the preview runtime
               run: |
                 # compile the project
-                ./lved-cli.js compile examples
+                ./lved-cli.js compile ${{ github.event.inputs.subfolder }}
 
             - name: Commit the runtime to branch 'lvgl-previews' and push
               run: |
-                cd examples
+                cd ${{ github.event.inputs.subfolder }}
                 git worktree add -f ~/runtimes-branch lvgl-previews
                 CURRENT_BRANCH=$(git branch --show-current)
-                DEST=~/runtimes-branch/branches/${CURRENT_BRANCH}
+                DEST=~/runtimes-branch/branches/${CURRENT_BRANCH}/${{ github.event.inputs.subfolder }}
                 mkdir -p ${DEST}
                 cp runtime/lved-runtime.js ${DEST}/lved-runtime.js
                 cd ${DEST}
