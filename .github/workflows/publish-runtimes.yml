@@ -20,6 +20,11 @@ jobs:
                   submodules: recursive
                   fetch-depth: 1
 
+            - name: Get the previews branch
+              run: |
+                git fetch origin
+                git branch lvgl-previews remotes/origin/lvgl-previews
+
             - name: Configure Git
               run: |
                 git config user.name "${{ github.actor }}"
@@ -37,10 +42,11 @@ jobs:
             - name: Compile the preview runtime
               run: |
                 # compile the project
-                ./lved-cli.js compile .
+                ./lved-cli.js compile examples
 
-            - name: Prepare to commit the runtime to branch 'lvgl-previews'
+            - name: Commit the runtime to branch 'lvgl-previews' and push
               run: |
+                cd examples
                 git worktree add -f ~/runtimes-branch lvgl-previews
                 CURRENT_BRANCH=$(git branch --show-current)
                 DEST=~/runtimes-branch/branches/${CURRENT_BRANCH}
@@ -50,13 +56,9 @@ jobs:
                 git add lved-runtime.js
                 git status
 
-            - name: Commit the runtime
-              run: |
                 echo Committing changes...
                 git add .
                 git commit -m "Automated commit by ${{ github.actor }}"
 
-            - name: Push changes to the 'lvgl-previews' branch
-              run: |
                 echo Pushing changes to the 'lvgl-previews' branch...
                 git push origin lvgl-previews
