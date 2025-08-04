@@ -55,7 +55,7 @@ jobs:
                 CURRENT_BRANCH=$(git branch --show-current)
                 DEST=~/runtimes-branch/branches/${CURRENT_BRANCH}/${{ github.event.inputs.subfolder }}
                 mkdir -p ${DEST}
-                cp runtime/lved-runtime.js ${DEST}/lved-runtime.js
+                cp runtime/lved-runtime.js ${DEST}/lved-runtime.*
                 cd ${DEST}
                 git add lved-runtime.js
                 git status
